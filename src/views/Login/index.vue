@@ -37,7 +37,7 @@
           <el-row :gutter="10">
   <el-col  :span="15"><div class="grid-content bg-purple"><el-input id="code" v-model="ruleForm.code" minlength="6" maxlength="6"></el-input></div></el-col>
   <el-col :span="9"><div class="grid-content bg-purple">
-   <el-button type="success" class="block" @click="getSms">获取验证码</el-button>
+   <el-button type="success" class="block" @click="getSms" :disabled="btnCodeStatus.status">{{btnCodeStatus.text}}</el-button>
     </div></el-col>
   
 </el-row>
@@ -53,12 +53,14 @@
   </div>
 </template>
 <script>
+import sha1 from 'js-sha1'
 import { stripscript ,validateEmail,validateVCode,validatePass} from '@/utils/ualidate.js'
 import {reactive ,ref, isRef,toRefs,onMounted } from '@vue/composition-api' 
-import {GetSms} from '@/api/login.js'
+import {GetSms,Register,Login} from '@/api/login.js'
 export default {
   name: "login",
   setup(props,context){
+       
     let validateCode = (rule, value, callback) => {
         
         if (!value) {
@@ -124,7 +126,17 @@ export default {
       //模块值
       const model=ref('login')
       const  isTrue=ref(true)
-      // 表单的数据
+      //获取验证码的状态
+      const btnCodeStatus=reactive({
+        status:false,
+        text:'获取验证码'
+      })
+      //倒计时
+      const timer=ref(null);
+    
+      
+     
+      
      const  ruleForm=reactive(
        {
           username: '',
@@ -150,11 +162,13 @@ export default {
     }
     ) 
       //声明函数
-     const clickCandler=(item =>{
+     const clickCandler=((item )=>{
         menuTab.forEach(elem => {
        
         elem.current = false;
       });
+     //重置表单 
+      context.refs['ruleForm'].resetFields()
       item.current = true;
       if(item.txt=="登录"){
         model.value="login"
@@ -165,33 +179,118 @@ export default {
     //表单方法
     const submitForm=( formName => {
        
+     
         context.refs[formName].validate((valid) => {
+        
           if (valid) {
-            alert('submit!');
+            let requestData={
+              username:ruleForm.username,
+              password:sha1(ruleForm.password),
+              code:ruleForm.code,
+              module:model.value
+            }
+            model.value=='login'?login(requestData):register(requestData);
+              
           } else {
             console.log('error submit!!');
             return false;
           }
         });
       })
+      /**
+       * 登录
+       */
+      const login=(requestData)=>{
+        Login(requestData).then(Response=>{
+              console.log(Response)
+               clearcountDown();
+              
+              }).catch(error=>{
+
+              })
+      }
+      /**
+       * 注册
+       */
+      const register=(requestData)=>{
+        Register(requestData).then(Response=>{
+                   let data=Response.data
+         
+               context.root.$message({
+              message:data.message,
+              type:'success'
+            })
+                
+               clearcountDown();
+               clickCandler(menuTab[0])
+              }).catch(error=>{
+
+              })
+      }
+      //倒计时
+      const countDown=((number)=>{
+        //判断定时器是否存在，存在则删除
+        if(timer.value){
+          clearInterval(timer.value);
+        }
+        let time=number;
+        timer.value=setInterval(()=>{
+          time--;
+          if(time==0){
+            clearInterval(timer.value);
+             btnCodeStatus.status=false
+             btnCodeStatus.text='再次发送';
+
+          }else{
+               btnCodeStatus.text=`倒计时${time}秒`;
+          }
+       
+        },1000)
+      })
+      //清理倒计时
+      const  clearcountDown=(()=>{
+        //清理定时器
+         clearInterval(timer.value);
+         btnCodeStatus.status=false
+         btnCodeStatus.text='获取验证码';
+      })
       //获取验证码
       const  getSms=(()=>{
+       
       //判断前面数据是否填写正确
       if(ruleForm.username==""){
+       
      
           context.root.$message.error('邮箱不能为空');
+        
          return false;
       }
       if(validateEmail(ruleForm.username)){
         context.root.$message.error('邮箱格式有误请重新输入！');
         return false;
       }
-       
-        GetSms({username:ruleForm.username,module:"login"}).then(Response=>{
-
+       let requestData={
+         username:ruleForm.username,
+         module:model.value
+       }
+       btnCodeStatus.status=true
+       btnCodeStatus.text='发送中';
+       GetSms( requestData).then(Response=>{
+           
+            let data=Response.data
+         
+           context.root.$message({
+              message:data.message,
+              type:'success'
+            })
+            //启用登录或注册
+             isTrue.value=false;
+             //倒计时调用
+             countDown(10);
         }).catch(error=>{
           
         })
+        
       })
     
       //挂在完成后
@@ -204,7 +303,11 @@ export default {
         ruleForm,
         rules,
         getSms,
-        isTrue
+        isTrue,
+        btnCodeStatus,
+        countDown,
+        clearcountDown
+    
 
       }
     }
