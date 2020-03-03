@@ -1,5 +1,5 @@
 <template>
 <div>
-  用户列表
+   信息分类
 </div>
 </template>

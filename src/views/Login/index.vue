@@ -53,7 +53,7 @@
   </div>
 </template>
 <script>
-import sha1 from 'js-sha1'
+// import sha1 from 'js-sha1'
 import { stripscript ,validateEmail,validateVCode,validatePass} from '@/utils/ualidate.js'
 import {reactive ,ref, isRef,toRefs,onMounted } from '@vue/composition-api' 
 import {GetSms,Register,Login} from '@/api/login.js'
@@ -185,7 +185,7 @@ export default {
           if (valid) {
             let requestData={
               username:ruleForm.username,
-              password:sha1(ruleForm.password),
+              password:ruleForm.password,
               code:ruleForm.code,
               module:model.value
             }
@@ -202,9 +202,11 @@ export default {
        */
       const login=(requestData)=>{
         Login(requestData).then(Response=>{
-              console.log(Response)
+              // console.log(Response)
                clearcountDown();
-              
+              context.root.$router.push({ 
+                name:'console'
+              })
               }).catch(error=>{
 
               })

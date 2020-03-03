@@ -15,6 +15,7 @@ module.exports = {
     config.resolve = { // 配置解析别名
       extensions: ['.js', '.json', '.vue'],
       alias: {
+        'vue':'vue/dist/vue.js',
         '@': path.resolve(__dirname, './src'),
         'public': path.resolve(__dirname, './public'),
         'components': path.resolve(__dirname, './src/components'),

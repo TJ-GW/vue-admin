@@ -8,6 +8,12 @@ import store from "./store";
 
 Vue.use(ElementUI);
 Vue.use(VueCompositionApi);
+Vue.component('icon',{
+  template:`
+  <div>哈哈</div>
+  `
+
+})
 
 Vue.config.productionTip = false;
 
