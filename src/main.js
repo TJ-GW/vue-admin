@@ -5,16 +5,10 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import router from "./router";
 import store from "./store";
+import './icons'
 
 Vue.use(ElementUI);
 Vue.use(VueCompositionApi);
-Vue.component('icon',{
-  template:`
-  <div>哈哈</div>
-  `
-
-})
-
 Vue.config.productionTip = false;
 
 new Vue({

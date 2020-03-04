@@ -25,9 +25,10 @@ const routes = [
     path:"/console",
       name: "console",
       redirect:'index',
-
+     
       meta:{
-        name:'控制台'
+        name:'控制台',
+        icon:'console'
       },
       component:Layout,
       children:[
@@ -37,6 +38,7 @@ const routes = [
         meta:{
           name:'首页'
         },
+      
         component:()=> import("@/views/Console/index.vue"),
         
         }]
@@ -44,8 +46,10 @@ const routes = [
   {
     path:"/info",
     name: "info",
+    
     meta:{
-        name:'信息管理'
+        name:'信息管理',
+        icon:'info'
       },
       component:Layout,
       children:[
@@ -71,8 +75,10 @@ const routes = [
     {
       path:"/user",
       name: "user",
+    
       meta:{
-          name:'用户管理'
+          name:'用户管理',
+          icon:'user'
         },
         component:Layout,
         children:[
