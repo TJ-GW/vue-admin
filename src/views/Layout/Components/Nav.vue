@@ -5,9 +5,9 @@
           default-active="1-4-1" 
           class="el-menu-vertical-demo" 
           :collapse="isCollapse" 
-          background-color="transparent" 
+          background-color="#344a5f" 
           text-color="#fff" 
-          active-text-color	="#fff"
+          active-text-color	="red"
           router>
           <template v-for="(item, index) in routers">
             <el-submenu v-if="!item.hidden" :key="item.id" :index="index + ''">
@@ -43,7 +43,7 @@ export default {
                 console.log(key, keyPath);
          }
          //compated监听
-        const isCollapse = computed(() => root.$store.state.isCollapse);
+        const isCollapse = computed(() => root.$store.state.app.isCollapse);
            
        
         return{

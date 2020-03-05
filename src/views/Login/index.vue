@@ -201,15 +201,23 @@ export default {
        * 登录
        */
       const login=(requestData)=>{
-        Login(requestData).then(Response=>{
-              // console.log(Response)
-               clearcountDown();
-              context.root.$router.push({ 
-                name:'console'
+              
+        context.root.$store.dispatch('app/login',requestData).then(response=>{
+                 context.root.$router.push({ 
+               name:'console'
               })
-              }).catch(error=>{
+        }).catch
 
-              })
+
+        // Login(requestData).then(Response=>{
+        //       // console.log(Response)
+        //        clearcountDown();
+        //       context.root.$router.push({ 
+        //         name:'console'
+        //       })
+        //       }).catch(error=>{
+
+        //       })
       }
       /**
        * 注册

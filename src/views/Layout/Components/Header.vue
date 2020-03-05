@@ -4,26 +4,27 @@
         <div class="pull-right ">
         <div class="user-info pull-left">
             <img src="../../../assets/images/face.jpg" alt="">
-        管理员    
+        {{username}}   
         </div>    
          <div class="pull-left header-icon"><svg-icon iconClass="exit" className="exit"></svg-icon></div>
         </div>
     </div>
 </template>
 <script>
+import { computed } from '@vue/composition-api';
 // import {reactive ,ref, isRef,toRefs,onMounted } from '@vue/composition-api';
 export default {
     name:'layoutHeader',
     setup(props ,{ root }){
         const navMenuState=()=>{
-            // console.log('x');
-            
-            root.$store.commit('SET_COLLAPSE');
+           
+            root.$store.commit('app/SET_COLLAPSE');
         
         }
-
+        const username=computed(()=>root.$store.state.app.UserName)
         return {
-        navMenuState
+        navMenuState,
+        username
     }
     }
 
