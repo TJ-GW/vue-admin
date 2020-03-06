@@ -6,7 +6,7 @@
             <img src="../../../assets/images/face.jpg" alt="">
         {{username}}   
         </div>    
-         <div class="pull-left header-icon"><svg-icon iconClass="exit" className="exit"></svg-icon></div>
+         <div class="pull-left header-icon" @click="exit"><svg-icon iconClass="exit" className="exit"></svg-icon></div>
         </div>
     </div>
 </template>
@@ -22,9 +22,17 @@ export default {
         
         }
         const username=computed(()=>root.$store.state.app.UserName)
+        const exit=(()=>{
+            root.$store.dispatch('app/exit').then(()=>{
+                   root.$router.push({ 
+                   name:'login'
+              })
+            })
+        })
         return {
         navMenuState,
-        username
+        username,
+        exit
     }
     }
 

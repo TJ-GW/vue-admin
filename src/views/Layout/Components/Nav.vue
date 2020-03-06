@@ -5,7 +5,7 @@
           default-active="1-4-1" 
           class="el-menu-vertical-demo" 
           :collapse="isCollapse" 
-          background-color="#344a5f" 
+           background-color="#344a5f" 
           text-color="#fff" 
           active-text-color	="red"
           router>
@@ -68,6 +68,7 @@ export default {
   }
 }
 #nav-wrap {
+  
   position: fixed;
   top: 0;
   left: 0;

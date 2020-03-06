@@ -1,4 +1,5 @@
 .el-submenu .el-menu-item {
+
     font-size: 14px;
     padding-left: 50px !important;
     &.is-active { background-color: rgba(245, 108, 108, 0.2) !important; }
@@ -8,6 +9,9 @@ li.el-submenu {
     &.is-active.is-opened .el-submenu__title { background-color: $mainCcolor !important; }
 }
 
+.el-menu-vertical-demo{
+    border: 0;
+}
 .close {
     .el-submenu {
         &.is-opened {
@@ -18,8 +22,10 @@ li.el-submenu {
     }
 }
 .el-menu--vertical {
+   
    .el-menu-item:hover {
         background-color: $mainCcolor !important;
+     
     }
 }
 

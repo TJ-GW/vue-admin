@@ -1,5 +1,5 @@
 import {Login} from '@/api/login.js'
-import { setUserName,setToKen,getUserName } from "@/utils/app";
+import { setUserName,setToKen,getUserName,removeToKen } from "@/utils/app";
 const state={
     isCollapse:JSON.parse(sessionStorage.getItem('isCollapse')) ||false,
     Token:'',
@@ -37,7 +37,12 @@ const actions={
                 reject(error)
             })
     })
-}
+},
+  exit(){
+    return new Promise(()=>{
+          removeToKen();
+     })
+  }
 }
 export default {
   namespaced:true,

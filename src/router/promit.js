@@ -2,8 +2,8 @@ import router from "./index";
 import {getToKen}  from "@/utils/app";
 const whiteRouter =['/login'];
 //路由守卫
-router.beforeEach((to,from,next)=>{
-          if(getToKen()){
+router.beforeEach((to,from,next)=>{true
+          if(true){
             
             console.log('存在');
             next()
