@@ -3,7 +3,7 @@ import {getToKen}  from "@/utils/app";
 const whiteRouter =['/login'];
 //路由守卫
 router.beforeEach((to,from,next)=>{true
-          if(true){
+          if(getToKen()){
             
             console.log('存在');
             next()

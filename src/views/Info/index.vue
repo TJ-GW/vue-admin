@@ -3,13 +3,13 @@
 <el-form :inline="true" class="demo-form-inline">
    <el-row :gutter="20">
    <el-col :span="3">
-      <el-form-item label="类型：">
+      <el-form-item label="分类：">
      <el-select v-model="value" placeholder="请选择" style="width:100px">
     <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
+      v-for="item in options.category"
+      :key="item.id"
+      :label="item.category_name"
+      :value="item.id">
     </el-option>
   </el-select>
    </el-form-item>
@@ -51,70 +51,61 @@
 
 </el-row> 
  </el-form>
- <el-table :data=" tableData " borderstyle="width: 100%">
+ <el-table :data=" tableData.item " borderstyle="width: 100%">
     <el-table-column type="selection" width="55">
     </el-table-column>
     <el-table-column prop="title" label="标题" width="800">
     </el-table-column>
-    <el-table-column prop="type" label="类型" width="180">
+    <el-table-column prop="categoryId" label="类型" width="180">
     </el-table-column>
-    <el-table-column prop="date" label="日期">
+    <el-table-column prop="createDate" label="日期">
     </el-table-column>
     <el-table-column prop="name" label="管理员">
     </el-table-column>
      <el-table-column label="操作">
         <template slot-scope="">
-        <el-button size="mini" type="danger">删除</el-button>
+        <el-button size="mini" type="danger" @click="delItem">删除</el-button>
         <el-button  size="mini" type="success" >编辑</el-button>
       </template>
     </el-table-column>
   </el-table>
   <el-row :gutter="20">
        <el-col :span="12">
-           <el-button size="mini" type="danger">全部删除</el-button>
+           <el-button size="mini" type="danger" @click="deleteAll">全部删除</el-button>
        </el-col>
          <el-col :span="12">
              <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 background
-                 :page-sizes="[100, 200, 300, 400]"
+                 :page-sizes="[10, 20, 30, 40]"
                 :page-size="100"
                 layout="total,prev,sizes, pager, next"
-                :total="1000"
+                :total="total"
                 class="pull-right"
                 >
          </el-pagination>
        </el-col>
   </el-row >
-  <DiaLog :flag="dialog_info" @close="closeDislog"/>
+  <DiaLog :flag="dialog_info" @close="closeDislog" :option="options"/>
 
 </div>
 </template>
 <script>
 import DiaLog from './dialog/dialog';
-import {reactive ,ref } from '@vue/composition-api';
+import {GetList,GetCategory} from '@/api/news.js';
+import {common}  from '@/api/common.js'
+// import {getToKen} from '@/utils/app.js';
+import {reactive ,ref ,onMounted, computed,watch} from '@vue/composition-api';
 export default {
   components:{
       DiaLog
   },
-   setup(){
-     const options=reactive([{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }]) 
+   setup(props,{root}){
+     const options=reactive({
+       category:[]
+     }) 
+     const {getInfoCategory,categoryItem}=common();
        const value=ref('');
        //事件
       const value1=ref('');
@@ -127,34 +118,38 @@ export default {
          label:'菜单'
       }
       ])
+      //总条数
+      const total=ref(0);
       const search_key=ref('ID');
       //输入框
       const input=ref('');
       //表格
-    const  tableData = reactive([{
-          title: 'hahah',
-          type: '上海市普陀区金沙江路 1517 弄',
-          date:'2016-05-02',
-          name: '王小虎'
-        },
-        {
-           title: 'hahah',
-          type: '上海市普陀区金沙江路 1517 弄',
-          date:'2016-05-02',
-          name: '王小虎'
-        } ,{
-            title: 'hahah',
-          type: '上海市普陀区金沙江路 1517 弄',
-          date:'2016-05-02',
-          name: '王小虎'
-        }
-        ])
+    const  tableData = reactive({
+      item:[]
+    }
+      
+    )
+    //data数据
+    const data=reactive({
+          categoryId: '',
+          startTiem:'',
+          endTime: '',
+          title: '',
+          id: '',
+          pageNumber: 1,
+          pageSize: 10
+    })
         //分页方法
       const handleSizeChange=(val) =>{
-        console.log(`每页 ${val} 条`);
+       
+        data.pageSize=val 
+        getlist()
+     
       }
       const  handleCurrentChange=(val)=> {
-        console.log(`当前页: ${val}`);
+        data.pageNumber=val
+        getlist()
+      
       }
       //新增变量
       const  dialog_info=ref(false);
@@ -163,6 +158,55 @@ export default {
       const  closeDislog=()=>{
            dialog_info.value=false
       }
+      //删除提示框
+      const delItem=()=>{
+         root.confirm({
+           content:'是否删除该条记录！'
+         })
+      }
+      const deleteAll=()=>{
+         root.confirm({
+           content:'是否删除全部内容！'
+         })
+      }
+     
+     const getCategory=()=>{
+          getInfoCategory()
+       
+          }
+      const getlist=()=>{
+        
+        //时间转换
+        const formatDate=(now)=>{
+           let  year=now.getFullYear(); 
+           let  month=now.getMonth()+1; 
+           let  date=now.getDate(); 
+           let  hour=now.getHours(); 
+           let  minute=now.getMinutes(); 
+           let  second=now.getSeconds(); 
+     return year+"-"+month+"-"+date+" "+hour+":"+minute+":"+second; 
+        }
+       GetList(data).then(Response=>{
+          let data=Response.data.data
+          data.data.forEach((item)=>{
+            let now=new Date(parseInt(item.createDate)*1000);
+                item.createDate=formatDate(now)
+          })
+        tableData.item=data.data
+        
+          total.value=data.total
+      }).catch(error=>{
+
+      })}
+     watch(()=> categoryItem.item,(value)=>{
+       
+     
+       options.category=categoryItem.item} )
+      //请求数据
+        onMounted(()=>{
+            getCategory()
+            getlist()
+        })
        return {
           options,
           value,
@@ -174,8 +218,11 @@ export default {
           handleSizeChange,
           handleCurrentChange,
           closeDislog,
-          dialog_info
-          
+          dialog_info,
+          delItem,
+          deleteAll,
+          total
+         
          
        }
   }

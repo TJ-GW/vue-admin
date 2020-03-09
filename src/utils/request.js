@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {Message}from 'element-ui';
+import   {getToKen,getUserName}  from './app.js';
 const BASEURL=process.env.NODE_ENV === 'production' ? '':'/api'
 
 
@@ -10,6 +11,9 @@ var service = axios.create({
 // 添加请求拦截器
 service.interceptors.request.use(function (config) {
     // 在发送请求之前做些什么
+    
+    config.headers['Tokey']=getToKen();
+    config.headers['UserName']=getUserName();
     return config;
   }, function (error) {
     // 对请求错误做些什么
