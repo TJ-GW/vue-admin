@@ -88,7 +88,8 @@ import {AddInfo} from '@/api/news.js'
          //重置表单
         //  root.$nextTick();
        refs['form'].resetFields(); 
-        
+       //确认关闭
+       dialog_info_flag.value= false 
        }).catch(error=>{
          loading.value=false;
        })
