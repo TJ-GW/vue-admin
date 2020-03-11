@@ -66,7 +66,7 @@
      <el-table-column label="操作">
         <template slot-scope="scope">
         <el-button size="mini" type="danger" @click="delItem(scope)">删除</el-button>
-        <el-button  size="mini" type="success" >编辑</el-button>
+        <el-button  size="mini" type="success" @click="editInfo(scope)">编辑</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -89,18 +89,21 @@
        </el-col>
   </el-row >
   <DiaLog :flag="dialog_info" @close="closeDislog" :option="options"/>
+  <Edit :flag.sync="editInfoEdit"  :option="options" :id="infoId" @resposeInfo="resposeInfo"/>
 
 </div>
 </template>
 <script>
 import DiaLog from './dialog/dialog';
+import Edit from './dialog/edit'
 import {GetList,GetCategory,DeleteInfo} from '@/api/news.js';
 import {common}  from '@/api/common.js'
 // import {getToKen} from '@/utils/app.js';
 import {reactive ,ref ,onMounted, computed,watch} from '@vue/composition-api';
 export default {
   components:{
-      DiaLog
+      DiaLog,
+      Edit
   },
    setup(props,{root}){
      const options=reactive({
@@ -126,6 +129,7 @@ export default {
       const search_key=ref('id');
       //输入框
       const input=ref('');
+      const infoId=ref('');
       //表格
     const  tableData = reactive({
       item:[]
@@ -156,10 +160,16 @@ export default {
       }
       //新增变量
       const  dialog_info=ref(false);
+      //编辑变量
+     
+      const   editInfoEdit=ref(false)
+
+
       // 新增关闭方法
 
       const  closeDislog=()=>{
            dialog_info.value=false
+           editInfo.value=false
            getlist()
       }
       //列表数据
@@ -282,6 +292,27 @@ export default {
         getlist()
         
       }
+      const edit=reactive({
+        item:[]
+      })
+      //编辑方法
+    const editInfo=(scope)=>{
+    
+          edit.item=scope.row
+     let ID=scope.row.id;
+         infoId.value=ID;
+      editInfoEdit.value=true
+    }
+    const resposeInfo=(val)=>{
+         let data=edit.item
+         console.log(data);
+        
+        for(let data in edit.item ){
+          edit.item[data]=val[data]
+        }
+      
+    }
+     
      watch(()=> categoryItem.item,(value)=>{
        
      
@@ -309,7 +340,11 @@ export default {
           loading,
           toCategory,
           handleSelectionChange,
-          search
+          search,
+          editInfo,
+          editInfoEdit,
+          infoId,
+          resposeInfo
          
          
        }
